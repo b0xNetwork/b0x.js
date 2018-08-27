@@ -85,6 +85,26 @@ export const payInterest = (
     return txObj.send(txOpts);
 };
 
+export const getInterest = async (
+  { web3, networkId, addresses },
+  { loanOrderHash, trader }
+) => {
+  const bZxContract = CoreUtils.getContractInstance(
+    web3,
+    getContracts(networkId).BZx.abi,
+    addresses.BZx
+  );
+  const data = await bZxContract.methods
+    .getInterest(loanOrderHash, trader)
+    .call();
+  return {
+    lender: data[0],
+    interestTokenAddress: data[1],
+    interestTotalAccrued: data[2],
+    interestPaidSoFar: data[3]
+  };
+};
+
 export const closeLoan = (
   { web3, networkId, addresses },
   { loanOrderHash, getObject, txOpts }
